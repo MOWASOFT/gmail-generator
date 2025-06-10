@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dot Trick Email Generator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 600px;
+    }
+    h1 {
+      font-size: 1.5rem;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+    input {
+      padding: 0.7rem;
+      width: 100%;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 1rem;
+    }
+    button {
+      background-color: #12b512;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.2rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #0a650a;
+    }
+    .results {
+      margin-top: 1rem;
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 1rem;
+      border-radius: 5px;
+      background: #fafafa;
+    }
+    .email {
+      font-family: monospace;
+      margin-bottom: 0.4rem;
+      color: #555;
+    }
+    .count {
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Max Email Generator</h1>
+    <input type="text" id="emailInput" placeholder="Enter your Gmail (e.g. mowadollar@gmail.com)" />
+    <button onclick="generateEmails()">Generate Variations</button>
+    <div class="results" id="results"></div>
+  </div>
+
+  <script>
+    function generateEmails() {
+      const email = document.getElementById('emailInput').value.trim();
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '';
+
+      if (!email.endsWith('@gmail.com')) {
+        resultsDiv.innerHTML = '<p style="color:red;">Please enter a valid Gmail address.</p>';
+        return;
+      }
+
+      const localPart = email.split('@')[0];
+      const domain = '@gmail.com';
+
+      const variations = new Set();
+
+      function insertDots(str, idx = 1, path = '') {
+        if (idx === str.length) {
+          variations.add(path + str[str.length - 1]);
+          return;
+        }
+
+        insertDots(str, idx + 1, path + str[idx - 1]);
+        insertDots(str, idx + 1, path + str[idx - 1] + '.');
+      }
+
+      insertDots(localPart);
+
+      const variationList = [...variations].map(v => `<div class="email">${v}${domain}</div>`).join('');
+      const countInfo = `<div class="count">Total Variations: ${variations.size}</div>`;
+      resultsDiv.innerHTML = countInfo + (variationList || '<p>No variations generated.</p>');
+    }
+  </script>
+</body>
+</html>
